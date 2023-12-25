@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/Akegarasu/blivedm-go/message"
@@ -118,10 +119,10 @@ func (liver *Liver) Stream(ctx context.Context) {
 	if err != nil {
 		logger.Error(err.Error())
 	}
-	logger.Info(liver.Name + " started")
+	slog.Info(liver.Name + " started")
 	select {
 	case <-ctx.Done():
-		fmt.Println("stop ", liver.Name)
+		slog.Info(liver.Name + " stopped")
 		c.Stop()
 		liver.Writer.Stop()
 	default:
