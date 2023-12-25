@@ -23,9 +23,9 @@ type data struct {
 
 type datas []*data
 
-func CountData(date int) {
+func CountData(datestr string) {
 	var ds = datas{}
-	datestr := fmt.Sprint(date)
+
 	if len(datestr) != 8 && len(datestr) != 6 {
 		slog.Error("日期格式错误")
 		return
@@ -51,7 +51,7 @@ func CountData(date int) {
 		d.count(v, stamps, stampe)
 	}
 	for _, v := range ds {
-		fmt.Printf("|%.2s|%09.1f|%09.1f|%09.1f|%09.1f|\n", v.name, v.sc, v.gift, v.guard, v.all)
+		fmt.Printf("|%.2s|%9.1f|%9.1f|%9.1f|%9.1f|\n", v.name, v.sc, v.gift, v.guard, v.all)
 	}
 	makeDir("./count")
 	csvfile, err := os.OpenFile("./count/"+datestr+"_count.csv", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
