@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -77,7 +76,7 @@ func main() {
 	flag.IntVar(&count, "count", 0, "统计日期")
 	flag.Parse()
 	if count != 0 {
-		fmt.Println("统计日期:", count)
+		slog.Info("统计日期:", count)
 		CountData(count)
 		return
 	}
@@ -85,10 +84,12 @@ func main() {
 	logs, _ := os.OpenFile("log.txt", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	defer logs.Close()
 	logger = slog.New(slog.NewTextHandler(logs, nil))
+	slog.Info("started")
 
 	livers := LoadLivers()
 	if len(livers) == 0 {
-		logger.Error("liver 超过 100")
+		slog.Error("liver 超过 100")
+		return
 	}
 
 	for _, liver := range livers {
@@ -98,5 +99,5 @@ func main() {
 		go liver.Stream(ctx)
 	}
 	<-ctx.Done()
-	logger.Debug("main stopped")
+	slog.Debug("stopped")
 }
