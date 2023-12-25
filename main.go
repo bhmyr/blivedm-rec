@@ -55,7 +55,7 @@ func makeDir(path string) {
 	}
 }
 
-// getTime 返回当前时间的字符串表示，格式为"2006010215"。
+// getTime 返回当前时间的字符串表示，格式为"200601"。
 func getTime() string {
 	return time.Now().Format("200601")
 }
@@ -76,7 +76,7 @@ func main() {
 	flag.StringVar(&count, "count", "0", "统计日期")
 	flag.Parse()
 	if count != "0" {
-		slog.Info("统计日期:", count)
+		slog.Info("统计日期:"+count)
 		CountData(count)
 		return
 	}
