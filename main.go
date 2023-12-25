@@ -71,11 +71,11 @@ func main() {
 	config.Dir = "./data/"
 	config.Backdir = "./backup/"
 
-	var count int
+	var count string
 
-	flag.IntVar(&count, "count", 0, "统计日期")
+	flag.StringVar(&count, "count", "0", "统计日期")
 	flag.Parse()
-	if count != 0 {
+	if count != "0" {
 		slog.Info("统计日期:", count)
 		CountData(count)
 		return
