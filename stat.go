@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"log/slog"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,7 +27,7 @@ func CountData(date int) {
 	var ds = datas{}
 	datestr := fmt.Sprint(date)
 	if len(datestr) != 8 && len(datestr) != 6 {
-		fmt.Println("日期格式错误")
+		slog.Error("日期格式错误")
 		return
 	}
 
@@ -50,7 +51,7 @@ func CountData(date int) {
 		d.count(v, stamps, stampe)
 	}
 	for _, v := range ds {
-		fmt.Println(v.name, v.sc, v.gift, v.guard, v.all)
+		fmt.Printf("|%.2s|%09.1f|%09.1f|%09.1f|%09.1f|\n", v.name, v.sc, v.gift, v.guard, v.all)
 	}
 	makeDir("./count")
 	csvfile, err := os.OpenFile("./count/"+datestr+"_count.csv", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
@@ -126,6 +127,7 @@ func timearea(date string) (int64, int64) {
 	}
 	return stamp.UnixMilli(), stamp.AddDate(0, 1, 0).UnixMilli()
 }
+
 func findFile(date string) []string {
 	var pathes []string
 
@@ -138,7 +140,6 @@ func findFile(date string) []string {
 				return nil
 			}
 			if filepath.Base(p)[:6] == date[:6] && filepath.Ext(p) == ".csv" {
-
 				pathes = append(pathes, p)
 			}
 			return nil
