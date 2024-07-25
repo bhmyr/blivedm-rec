@@ -23,6 +23,7 @@ type Liver struct {
 	Roomid int    `json:"roomid"`
 	Client *client.Client
 	Writer *CsvWriter
+	Ts     int64
 	C      chan struct{}
 }
 
@@ -76,7 +77,7 @@ func main() {
 	flag.StringVar(&count, "count", "0", "统计日期")
 	flag.Parse()
 	if count != "0" {
-		slog.Info("统计日期:"+count)
+		slog.Info("统计日期:" + count)
 		CountData(count)
 		return
 	}
@@ -96,6 +97,7 @@ func main() {
 		liver.Client = client.NewClient(liver.Roomid)
 		liver.Client.SetCookie(config.Cookies)
 		liver.Writer, _ = NewCsvWriter(liver.Name)
+		liver.Ts = time.Now().Unix()
 		go liver.Stream(ctx)
 	}
 	<-ctx.Done()
