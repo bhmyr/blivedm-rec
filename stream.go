@@ -16,17 +16,6 @@ var GuardLevel = map[int]string{
 	3: "舰长",
 }
 
-// 主播粉丝实时更新
-type ROOM_REAL_TIME_MESSAGE_UPDATE struct {
-	Cmd  string `json:"cmd"`
-	Data struct {
-		Roomid    int `json:"roomid"`
-		Fans      int `json:"fans"`
-		RedNotice int `json:"red_notice"`
-		FansClub  int `json:"fans_club"`
-	} `json:"data"`
-}
-
 func (liver *Liver) fetch() {
 	c := liver.Client
 	// 开播
@@ -38,6 +27,7 @@ func (liver *Liver) fetch() {
 		})
 		logger.Info(liver.Name + " 开播")
 	})
+
 	// PREPARING 下播？
 	c.RegisterCustomEventHandler("PREPARING", func(s string) {
 		liver.Writer.Write(false, []string{
@@ -46,6 +36,12 @@ func (liver *Liver) fetch() {
 		})
 		logger.Info(liver.Name + " 下播")
 	})
+	// 红包
+	//c.RegisterCustomEventHandler("POPULARITY_RED_POCKET_NEW", func(s string) {
+	//	var data = POPULARITY_RED_POCKET_NEW{}
+	//	json.Unmarshal([]byte(s), &data)
+	//	fmt.Println(data)
+	//})
 
 	// 主播粉丝实时更新
 	c.RegisterCustomEventHandler("ROOM_REAL_TIME_MESSAGE_UPDATE", func(s string) {
@@ -58,6 +54,26 @@ func (liver *Liver) fetch() {
 			fmt.Sprint(data.Data.FansClub),
 		})
 	})
+
+	// 高能
+	c.RegisterCustomEventHandler("ONLINE_RANK_COUNT", func(s string) {
+		if time.Now().Unix()-liver.Ts < 30 {
+			return
+		}
+		liver.Ts = time.Now().Unix()
+		var data = ONLINE_RANK_COUNT{}
+		json.Unmarshal([]byte(s), &data)
+		if data.Data.Count == 0 {
+			return
+		}
+		liver.Writer.Write(false, []string{
+			fmt.Sprint(time.Now().UnixMilli()),
+			"高能",
+			fmt.Sprint(data.Data.Count),
+			fmt.Sprint(data.Data.OnlineCount),
+		})
+	})
+
 	// 弹幕事件
 	if config.Nonpaid {
 		c.OnDanmaku(func(danmaku *message.Danmaku) {
@@ -109,7 +125,6 @@ func (liver *Liver) fetch() {
 			fmt.Sprint(userToast.Price / 1000),
 		})
 	})
-
 }
 
 func (liver *Liver) Stream(ctx context.Context) {
