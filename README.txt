@@ -3,11 +3,16 @@
 需要修改的文件
     config.json
         nonpaid：true/false, true为不记录免费礼物与弹幕, false为记录
+        login_type: mobile/cookie
+            mobile为手机端打开连接确认登录，优势在于能自动更新cookie
+            cookie为浏览器复制cookie到下面cookies中，优势在于方便
         cookies：bilibili网页登陆cookies，不填则无法记录观众id
     livers.json
         需要记录的主播名单
 
 存储的文件
+    login.json
+        mobile登录方式生成的认证信息，切勿外传
     log.txt
         开播、下播信息
     data/YYYYMM_free_livername.csv
