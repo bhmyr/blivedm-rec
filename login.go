@@ -29,7 +29,7 @@ var loginInfo *LoginInfo
 
 // 获取二维码登录链接，返回二维码链接和二维码key
 func (l *LoginInfo) get_qrcode() (string, string) {
-	slog.Info("获取二维码")
+	slog.Info("获取登录连接")
 	url := "https://passport.bilibili.com/x/passport-login/web/qrcode/generate"
 
 	var qrcode struct {
@@ -59,8 +59,8 @@ func (l *LoginInfo) get_qrcode() (string, string) {
 func (l *LoginInfo) Login() {
 	qr_url, qr_token := l.get_qrcode()
 
-	fmt.Println("在浏览器打开链接，并扫码登录: " + qr_url)
-	fmt.Print("扫码登录成功后按回车键继续...")
+	fmt.Println("在手机端浏览器打开链接，并扫码登录: " + qr_url)
+	fmt.Print("确认登录成功后按回车键继续...")
 	fmt.Scanln()
 	var data struct {
 		Code    int    `json:"code"`
