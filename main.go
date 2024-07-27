@@ -29,10 +29,11 @@ type Liver struct {
 
 // Config represents the configuration settings.
 type Config struct {
-	Cookies string `json:"cookies"`
-	Nonpaid bool   `json:"nonpaid"`
-	Dir     string
-	Backdir string
+	Cookies   string `json:"cookies"`
+	Nonpaid   bool   `json:"nonpaid"`
+	LoginType string `json:"login_type"`
+	Dir       string
+	Backdir   string
 }
 
 // LoadLivers loads the list of livers from a JSON file.
@@ -68,9 +69,23 @@ func main() {
 
 	makeDir("./data")
 	makeDir("./backup")
-	LoadConfig()
 	config.Dir = "./data/"
 	config.Backdir = "./backup/"
+
+	LoadConfig()
+
+	cookies := ""
+
+	if config.LoginType == "cookie" {
+		// 从配置文件中读取 cookie
+		cookies = config.Cookies
+	} else if config.LoginType == "mobile" {
+		// 通过手机登录获取 cookie
+		login()
+		for k, c := range loginInfo.Cookies {
+			cookies += k + "=" + c + ";"
+		}
+	}
 
 	var count string
 
@@ -95,7 +110,7 @@ func main() {
 
 	for _, liver := range livers {
 		liver.Client = client.NewClient(liver.Roomid)
-		liver.Client.SetCookie(config.Cookies)
+		liver.Client.SetCookie(cookies)
 		liver.Writer, _ = NewCsvWriter(liver.Name)
 		liver.Ts = time.Now().Unix()
 		go liver.Stream(ctx)
